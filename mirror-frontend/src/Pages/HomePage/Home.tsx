@@ -1,9 +1,11 @@
-import Sidebar from "../../Components/Sidebar"
+import AreaChart from "../../Components/Charts/AreaChart"
+//import Sidebar from "../../Components/Sidebar"
 
 function Home() {
  
   return (
-   <Sidebar />
+   //<Sidebar />
+   <AreaChart />
   )
 }
 
