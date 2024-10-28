@@ -1,10 +1,42 @@
-import { useState } from 'react';
+// src/AreaChart.tsx
+import { useState, useEffect } from 'react';
 import Chart from 'react-apexcharts';
+import { getAllProgresses } from '../../Api/Client/Endpoints/progressValueApi';
+import { Progress, ProgressValue } from '../../Types/Progress/ProgressType';
 
 const AreaChart = () => {
   const [timePeriod, setTimePeriod] = useState('7');
+  const [chartData, setChartData] = useState<string[]>([]); // String array for time values
+  const [categories, setCategories] = useState<string[]>([]);
 
-  // Nastavení konfigurace grafu
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getAllProgresses();
+        const progresses: Progress[] = response.data;
+
+        const timeData = progresses.flatMap((item) =>
+          item.progressColumnHead === "Time" 
+            ? item.progressValue.map((entry : ProgressValue) => ({
+                value: entry.progressColumnValue,
+                date: `${entry.progressDate_Day}/${entry.progressDate_Month}/${entry.progressDate_Year}`,
+              }))
+            : []
+        );
+
+        const values = timeData.map((entry) => entry.value);
+        const dates = timeData.map((entry) => entry.date);
+
+        setChartData(values);
+        setCategories(dates);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const options = {
     chart: {
       height: "100%",
@@ -18,7 +50,7 @@ const AreaChart = () => {
     tooltip: {
       enabled: true,
       x: {
-        show: false,
+        show: true,
       },
     },
     fill: {
@@ -42,17 +74,13 @@ const AreaChart = () => {
       padding: {
         left: 2,
         right: 2,
-        top: 0
+        top: 0,
       },
     },
     xaxis: {
-      categories: timePeriod === '7' 
-                  ? ['01 Feb', '02 Feb', '03 Feb', '04 Feb', '05 Feb', '06 Feb', '07 Feb']
-                  : timePeriod === '30' 
-                  ? Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`)
-                  : Array.from({ length: 90 }, (_, i) => `Day ${i + 1}`),
+      categories: categories,
       labels: {
-        show: false,
+        show: true,
       },
       axisBorder: {
         show: false,
@@ -62,35 +90,32 @@ const AreaChart = () => {
       },
     },
     yaxis: {
-      show: false,
+      title: {
+        text: 'Time (MM:SS)', // Y-axis label
+      },
     },
   };
 
-  // Nastavení datové série grafu
   const chartSeries = [
     {
-      name: "New users",
-      data: timePeriod === '7'
-        ? [6500, 6418, 6456, 6526, 6356, 6456, 6700]
-        : timePeriod === '30'
-        ? Array.from({ length: 30 }, () => Math.floor(Math.random() * 1000) + 6000)
-        : Array.from({ length: 90 }, () => Math.floor(Math.random() * 1000) + 6000),
+      name: "Training Time",
+      data: chartData.map((value) => Number(value.replace(':', '.'))),
       color: "#1A56DB",
     },
   ];
 
   return (
-    <div className="max-w-sm w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
+    <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
       <div className="flex justify-between">
         <div>
           <h5 className="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">
             {timePeriod === '7' ? '32.4k' : timePeriod === '30' ? '120k' : '350k'}
           </h5>
-          <p className="text-base font-normal text-gray-500 dark:text-gray-400">Users in last {timePeriod} days</p>
+          <p className="text-base font-normal text-gray-500 dark:text-gray-400">
+            Training Time in last {timePeriod} days
+          </p>
         </div>
-        <div
-          className="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-500 text-center"
-        >
+        <div className="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-500 text-center">
           12%
           <svg
             className="w-3 h-3 ms-1"
@@ -129,7 +154,7 @@ const AreaChart = () => {
           </div>
           <a
             href="#"
-            className="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500  hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2"
+            className="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500 hover:bg-gray-100 dark:hover:bg-gray-700 px-3 py-2"
           >
             Users Report
             <svg
