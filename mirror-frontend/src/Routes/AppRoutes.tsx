@@ -13,28 +13,29 @@ const Analytics = lazy(() => import('../Pages/SidebarPages/AnalyticsPage'));
 const Feedback = lazy(() => import('../Pages/SidebarPages/FeedbackPage'));
 const Statistics = lazy(() => import('../Pages/SidebarPages/StatisticsPage'));
 const Blog = lazy(() => import('../Pages/SidebarPages/BlogPage'));
-
+const LoginPage = lazy(() => import('../Pages/LoginPage/Login'));
 
 const AppRoutes = () => {
   return (
     <Router>
-      <Suspense fallback={<Loader />}>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/help" element={<Help />} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/feedback" element={<Feedback />} />
-            <Route path="/statistics" element={<Statistics />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
-      </Suspense>
-    </Router>
+    <Suspense fallback={<Loader />}>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/resources" element={<Resources />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/feedback" element={<Feedback />} />
+          <Route path="/statistics" element={<Statistics />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="*" element={<NotFound />} />
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      </Layout>
+    </Suspense>
+  </Router>
   );
 };
 

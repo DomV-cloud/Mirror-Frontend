@@ -1,10 +1,12 @@
-import AreaChart from "../../Components/Charts/AreaChart"
+//import AreaChart from "../../Components/Charts/AreaChart"
+
+import AddChartGrid from "../../Components/AddChartGrid";
 
 function HomePage() {
  
   return (
    <div className="w-full">
-    <AreaChart />
+    <AddChartGrid />
    </div>
   )
 }
