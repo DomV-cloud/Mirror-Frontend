@@ -14,6 +14,7 @@ const Feedback = lazy(() => import('../Pages/SidebarPages/FeedbackPage'));
 const Statistics = lazy(() => import('../Pages/SidebarPages/StatisticsPage'));
 const Blog = lazy(() => import('../Pages/SidebarPages/BlogPage'));
 const LoginPage = lazy(() => import('../Pages/LoginPage/Login'));
+const MyProgressPage = lazy(() => import('../Pages/MyProgressPage/MyProgressPage'));
 
 const AppRoutes = () => {
   return (
@@ -30,8 +31,9 @@ const AppRoutes = () => {
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/statistics" element={<Statistics />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="*" element={<NotFound />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/progress/get/:progressId" element={<MyProgressPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
     </Suspense>

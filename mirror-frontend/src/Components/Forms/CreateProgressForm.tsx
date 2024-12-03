@@ -1,5 +1,6 @@
 import { useState } from "react";
 import apiClient from '../../Api/Client/ApiClient';
+import { useNavigate } from "react-router-dom"; // Pro navigaci
 
 type CreateProgressFormProps = {
   onClose: () => void;
@@ -19,6 +20,8 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
   const [progressValues, setProgressValues] = useState<ProgressValueDto[]>([]);
   const [userId] = useState("6D3080D4-5DBF-4549-8AC1-77713785DE2A"); // Simulovaný GUID, nahradit dynamickým uživatelem
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate(); // React Router navigace
 
   const handleAddProgressValue = () => {
     setProgressValues([
@@ -60,11 +63,14 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
       const response = await apiClient.post("progress/create-progress", dataToSubmit);
       alert("Progress successfully created!");
       console.log("Server response:", response.data);
+      const id = response.data.createdProgressId;
+      console.log('Response id:', id);
 
       // Reset formuláře
       setProgressName("");
       setProgressValues([]);
       onClose();
+      navigate(`/progress/get/${id}`);
     } catch (error) {
       alert("Failed to create progress. Please try again.");
       console.error("Error creating progress:", error);

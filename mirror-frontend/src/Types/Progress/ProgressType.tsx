@@ -10,6 +10,7 @@ export interface ProgressValue {
     description: string;
     progressColumnHead: string;
     progressValue: ProgressValue[];
+    progressName: string;
   }
   
   export type ProgressResponse = Progress[];
