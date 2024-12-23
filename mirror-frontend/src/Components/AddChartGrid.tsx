@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ModalForm from "./FormModal";
+import ModalForm from "./Modals/FormModal";
 import PlusIcon from "./Icons/PlusIcons";
 
 function AddChartGrid() {

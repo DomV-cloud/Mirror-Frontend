@@ -60,17 +60,15 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
     };
 
     try {
-      const response = await apiClient.post("progress/create-progress", dataToSubmit);
+      const response = await apiClient.post("progress/create", dataToSubmit);
       alert("Progress successfully created!");
-      console.log("Server response:", response.data);
       const id = response.data.createdProgressId;
-      console.log('Response id:', id);
 
       // Reset formuláře
       setProgressName("");
       setProgressValues([]);
       onClose();
-      navigate(`/progress/get/${id}`);
+      navigate(`/progress/${id}`);
     } catch (error) {
       alert("Failed to create progress. Please try again.");
       console.error("Error creating progress:", error);

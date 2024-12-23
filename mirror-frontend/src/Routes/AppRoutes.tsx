@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Loader from '../Components/Loaders/Loader';
 import Layout from '../Components/Layout';
+import AddChartGrid from '../Components/AddChartGrid';
 
 const Home = lazy(() => import('../Pages/SidebarPages/HomePage'));
 const Register = lazy(() => import('../Pages/RegisterPage/Register'));
@@ -32,7 +33,8 @@ const AppRoutes = () => {
           <Route path="/statistics" element={<Statistics />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/progress/get/:progressId" element={<MyProgressPage />} />
+          <Route path="/progress/:progressId" element={<MyProgressPage />} />
+          <Route path="/progressess" element={<AddChartGrid />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
