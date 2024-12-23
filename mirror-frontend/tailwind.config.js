@@ -15,6 +15,8 @@ export default {
     require('flowbite/plugin')({
       charts: true,
   }),
-  nextui()
+  nextui({
+    addCommonColors: true,
+  }),
   ],
 }
