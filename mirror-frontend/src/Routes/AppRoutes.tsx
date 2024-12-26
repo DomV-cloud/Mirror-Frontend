@@ -13,7 +13,7 @@ const Settings = lazy(() => import('../Pages/SidebarPages/SettingsPage'));
 const Analytics = lazy(() => import('../Pages/SidebarPages/AnalyticsPage'));
 const Feedback = lazy(() => import('../Pages/SidebarPages/FeedbackPage'));
 const Statistics = lazy(() => import('../Pages/SidebarPages/StatisticsPage'));
-const Blog = lazy(() => import('../Pages/SidebarPages/BlogPage'));
+const Blog = lazy(() => import('../Pages/SidebarPages/BlogPage/BlogPage'));
 const LoginPage = lazy(() => import('../Pages/LoginPage/Login'));
 const MyProgressPage = lazy(() => import('../Pages/MyProgressPage/MyProgressPage'));
 

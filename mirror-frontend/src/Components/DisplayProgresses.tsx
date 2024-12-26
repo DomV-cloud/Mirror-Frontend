@@ -9,6 +9,8 @@ import {
   CircularProgress,
 } from "@nextui-org/react";
 import FireIcon from "./Icons/FireIcon";
+import PlanningComponent from "./PlanningComponent";
+import backgroundImage from '../assets/images/sprout-growing-bg.jpg';
 
 type AddChartGridProps = {
   progresses: Progress[];
@@ -16,24 +18,44 @@ type AddChartGridProps = {
 
 function DisplayProgresses({ progresses }: AddChartGridProps) {
   const navigate = useNavigate();
+  const nextMeasurementDate = new Date("2025-01-15");
+  const measurementDay = "Monday";
 
   const handleRedirectToCreateChart = () => {
     navigate("/progressess");
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center p-4 sm:p-6 bg-gray-50">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
-        Your Progresses
-      </h1>
-      <Button
-        color="primary"
-        variant="shadow"
-        onClick={handleRedirectToCreateChart}
-        className="mb-6 sm:mb-8"
-      >
-        Add Progress
-      </Button>
+    <div className="w-full flex flex-col items-center p-4 sm:p-6 bg-gray-50">
+      <div className="w-full relative text-center mb-6 sm:mb-8">
+      {/* Pozadí s obrázkem */}
+      <div
+        className="absolute inset-0 bg-gradient-to-b from-white/80 to-transparent"
+        /*Tady bych to nahradil spíše animací */
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      ></div>
+
+      {/* Text nad obrázkem */}
+      <div className="relative z-10 px-4">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-gray-800">
+          Plant the seed today, and watch your progress bloom.
+        </h1>
+        <Button
+          color="primary"
+          variant="shadow"
+          onClick={handleRedirectToCreateChart}
+          className="text-lg px-6 py-3 rounded-lg"
+        >
+          Add Progress
+        </Button>
+      </div>
+    </div>
+
+
       <div className="w-full flex sm:flex-col md:flex-col lg:flex-row gap-4">
       {/*This should wrap into component z.B. TrackingComponent*/}
       {progresses.map((progress, index) => (
@@ -109,14 +131,7 @@ function DisplayProgresses({ progresses }: AddChartGridProps) {
       </Card>
       ))}
       {/*This should wrap into component z.B. PlanningComponent*/}
-      <Card className="flex-1 bg-white shadow-lg border border-gray-200">
-        <CardHeader>
-          <div className="text-lg font-semibold">Next Measurement Countdown</div>
-        </CardHeader>
-        <CardBody className="flex flex-col items-center justify-center p-4">
-          <div className="text-4xl font-bold text-red-600">5</div>
-        </CardBody>
-      </Card>
+      <PlanningComponent nextMeasurementDate={nextMeasurementDate} measurementDay={measurementDay} />
     </div>
 
     </div>

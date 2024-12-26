@@ -1,6 +1,7 @@
 import { useState } from "react";
 import apiClient from '../../Api/Client/ApiClient';
 import { useNavigate } from "react-router-dom"; // Pro navigaci
+import { createProgress } from "../../Api/Client/Endpoints/progressValueApi";
 
 type CreateProgressFormProps = {
   onClose: () => void;
@@ -60,7 +61,8 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
     };
 
     try {
-      const response = await apiClient.post("progress/create", dataToSubmit);
+      const response = await createProgress(dataToSubmit);
+      
       alert("Progress successfully created!");
       const id = response.data.createdProgressId;
 
