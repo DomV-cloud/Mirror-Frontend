@@ -16,8 +16,8 @@ function Sidebar() {
       icon: <HomeIcon />,
     },
     {
-      label: 'Statistics',
-      to: '/statistics',
+      label: 'Memories',
+      to: '/users/6D3080D4-5DBF-4549-8AC1-77713785DE2A/memories', // temp solution
       icon: <StatisticsIcon />,
     },
     {

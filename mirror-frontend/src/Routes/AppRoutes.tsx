@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Loader from '../Components/Loaders/Loader';
 import Layout from '../Components/Layout';
 import AddChartGrid from '../Components/AddChartGrid';
+import MemoryPage from '../Pages/SidebarPages/MemoriesPage/MemoriesPage';
+import SingleMemoryPage from '../Pages/SidebarPages/MemoriesPage/SingleMemoryPage';
 
 const Home = lazy(() => import('../Pages/SidebarPages/HomePage'));
 const Register = lazy(() => import('../Pages/RegisterPage/Register'));
@@ -35,6 +37,8 @@ const AppRoutes = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/progress/:progressId" element={<MyProgressPage />} />
           <Route path="/progressess" element={<AddChartGrid />} />
+          <Route path="/users/:userId/memories" element={<MemoryPage />} />
+          <Route path="/memories/:memoryId" element={<SingleMemoryPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
