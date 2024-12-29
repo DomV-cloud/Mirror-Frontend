@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardHeader, CardBody, Image } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, Image, Button } from "@nextui-org/react";
 import { getUserMemoriesById } from "../../../Api/Client/Endpoints/UserApi";
 import Loader from "../../../Components/Loaders/Loader";
 
@@ -50,8 +50,7 @@ function MemoriesPage() {
     navigate(`/memories/${memoryId}`);
     console.log("Redirecting to memory with ID:", memoryId);
   };
-  
- 
+
   useEffect(() => {
     const fetchMemories = async () => {
       try {
@@ -91,14 +90,26 @@ function MemoriesPage() {
   if (memories.length === 0) {
     return (
       <div className="p-6 bg-gray-50 min-h-screen flex items-center justify-center">
-        <p className="text-lg font-semibold text-gray-500">No memories available.</p>
+        <p className="text-lg font-semibold text-gray-500">
+          No memories available.
+        </p>
       </div>
     );
   }
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Your Memories</h2>
+      <div className="flex flex-row items-center justify-between mb-6 flex-wrap">
+        <h2 className="text-3xl font-bold text-gray-800 mb-4 sm:mb-0">
+          Your Memories
+        </h2>
+        <Button
+          color="primary"
+          variant="shadow"
+          className="text-lg px-6 py-3 rounded-lg">
+          Add Memory
+        </Button>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {memories.map((memory) => (
           <Card

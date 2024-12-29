@@ -47,7 +47,7 @@ function DisplayProgresses({ progresses }: AddChartGridProps) {
         <Button
           color="primary"
           variant="shadow"
-          onClick={handleRedirectToCreateChart}
+          onPress={handleRedirectToCreateChart}
           className="text-lg px-6 py-3 rounded-lg"
         >
           Add Progress

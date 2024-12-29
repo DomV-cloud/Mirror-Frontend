@@ -1,24 +1,25 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // Pro získání `memoryId` z URL
-import { Card, CardHeader, CardBody, Image } from "@nextui-org/react";
+import { useParams } from "react-router-dom";
+import { Card, CardHeader, CardBody, Image, Button } from "@nextui-org/react";
 import { getMemoryById } from "../../../Api/Client/Endpoints/UserMemoryApi";
 import Loader from "../../../Components/Loaders/Loader";
+import UpdateMemoriesModal from "./UpdateMemoryModal";
 
 interface ImageData {
-    id: string;
-    url: string | null;
-    fileName: string;
-    contentType: string;
-    content: string; // Binary data in Base64
-  }
-  
-  interface UserMemory {
-    id: string;
-    memoryName: string;
-    description?: string;
-    images: ImageData[];
-    reminder: string;
-  }
+  id: string;
+  url: string | null;
+  fileName: string;
+  contentType: string;
+  content: string; // Binary data in Base64
+}
+
+interface UserMemory {
+  memoryId: string;
+  memoryName: string;
+  description?: string;
+  images: ImageData[];
+  reminder: string;
+}
 
 const defaultImage = "https://via.placeholder.com/150?text=No+Image+Available";
 
@@ -27,6 +28,8 @@ function SingleMemoryPage() {
   const [memory, setMemory] = useState<UserMemory | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [formData, setFormData] = useState<UserMemory | null>(null);
 
   useEffect(() => {
     const fetchMemory = async () => {
@@ -53,6 +56,30 @@ function SingleMemoryPage() {
 
     fetchMemory();
   }, [memoryId]);
+
+  const handleEditClick = () => {
+    setFormData(memory); // Pre-fill the form with current memory data
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setFormData(null);
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (!formData) return;
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFormSubmit = () => {
+    // TODO: Implement the update logic here (e.g., API call to update the memory)
+    console.log("Form data submitted:", formData);
+    handleCloseModal();
+  };
 
   if (loading) {
     return <Loader />;
@@ -86,7 +113,9 @@ function SingleMemoryPage() {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">{memory.memoryName}</h2>
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">
+        {memory.memoryName}
+      </h2>
       <Card className="w-full rounded-xl shadow-md hover:shadow-lg transition-shadow">
         <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
           <h4 className="font-bold text-lg">{memory.memoryName}</h4>
@@ -107,8 +136,19 @@ function SingleMemoryPage() {
           <p className="text-sm text-gray-600 mt-3">
             {memory.description || "No description available."}
           </p>
+          <Button color="primary" className="mt-4" onPress={handleEditClick}>
+            Edit Memory
+          </Button>
         </CardBody>
       </Card>
+
+      <UpdateMemoriesModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        formData={formData}
+        handleInputChange={handleInputChange}
+        handleFormSubmit={handleFormSubmit}
+      />
     </div>
   );
 }
