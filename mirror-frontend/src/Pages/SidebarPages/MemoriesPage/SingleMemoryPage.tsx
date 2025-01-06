@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardHeader, CardBody, Image, Button } from "@nextui-org/react";
-import { getMemoryById } from "../../../Api/Client/Endpoints/UserMemoryApi";
+import {
+  getMemoryById,
+  updateMemoryById,
+} from "../../../Api/Client/Endpoints/UserMemoryApi";
 import Loader from "../../../Components/Loaders/Loader";
 import UpdateMemoriesModal from "./UpdateMemoryModal";
 
@@ -14,6 +17,7 @@ interface ImageData {
 }
 
 interface UserMemory {
+  userId: string;
   memoryId: string;
   memoryName: string;
   description?: string;
@@ -31,29 +35,32 @@ function SingleMemoryPage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [formData, setFormData] = useState<UserMemory | null>(null);
 
-  useEffect(() => {
-    const fetchMemory = async () => {
-      try {
-        setLoading(true);
+  const fetchMemory = async () => {
+    try {
+      setLoading(true);
 
-        if (!memoryId) {
-          throw new Error("Memory ID is missing.");
-        }
-
-        const response = await getMemoryById(memoryId);
-
-        if (!response || !response.data) {
-          throw new Error("Failed to fetch the memory.");
-        }
-
-        setMemory(response.data);
-      } catch (err: any) {
-        setError(err.message || "An error occurred while fetching the memory.");
-      } finally {
-        setLoading(false);
+      if (!memoryId) {
+        throw new Error("Memory ID is missing.");
       }
-    };
 
+      const response = await getMemoryById(memoryId);
+
+      if (!response || !response.data) {
+        throw new Error("Failed to fetch the memory.");
+      }
+
+      setMemory(response.data);
+    } catch (err: any) {
+      setError(err.message || "An error occurred while fetching the memory.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!memoryId) {
+      alert("Memory id is required");
+    }
     fetchMemory();
   }, [memoryId]);
 
@@ -75,10 +82,40 @@ function SingleMemoryPage() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleFormSubmit = () => {
-    // TODO: Implement the update logic here (e.g., API call to update the memory)
-    console.log("Form data submitted:", formData);
-    handleCloseModal();
+  const handleFormSubmit = async () => {
+    if (!formData || !memoryId) {
+      console.error("Form data or memory ID is missing.");
+      return;
+    }
+
+    try {
+      const requestPayload = {
+        UserId: formData.userId,
+        MemoryName: formData.memoryName,
+        Description: formData.description,
+        NewImages: [], // Zatím prázdné, pokud nepodporujeme nahrávání nových obrázků
+        ExistingImageIds: formData.images.map((image) => image.id),
+        Reminder: formData.reminder,
+      };
+
+      const formDataRequest = new FormData();
+      formDataRequest.append("UserId", requestPayload.UserId);
+      formDataRequest.append("MemoryName", requestPayload.MemoryName || "");
+      formDataRequest.append("Description", requestPayload.Description || "");
+      formDataRequest.append("Reminder", requestPayload.Reminder || "");
+
+      requestPayload.ExistingImageIds.forEach((id) =>
+        formDataRequest.append("ExistingImageIds", id)
+      );
+
+      await updateMemoryById(memoryId, formDataRequest);
+
+      console.log("Memory updated successfully");
+      await fetchMemory(); // Reload updated memory data
+      handleCloseModal(); // Close modal after successful update
+    } catch (error) {
+      console.error("Error updating memory:", error);
+    }
   };
 
   if (loading) {
@@ -147,7 +184,8 @@ function SingleMemoryPage() {
         onClose={handleCloseModal}
         formData={formData}
         handleInputChange={handleInputChange}
-        handleFormSubmit={handleFormSubmit}
+        memoryId={memoryId || ""} // Pass memoryId to modal
+        fetchUpdatedMemory={fetchMemory} // Reload memory data after update
       />
     </div>
   );

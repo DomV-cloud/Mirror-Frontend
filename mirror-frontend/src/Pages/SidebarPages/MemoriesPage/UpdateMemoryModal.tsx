@@ -1,4 +1,3 @@
-// src/Components/Modals/UpdateMemoriesModal.tsx
 import React from "react";
 import {
   Modal,
@@ -10,7 +9,9 @@ import {
   Textarea,
   Button,
 } from "@nextui-org/react";
+import axios from "axios";
 import { UserMemory } from "../../../Types/Memory/MemoryType";
+import { updateMemoryById } from "../../../Api/Client/Endpoints/UserMemoryApi";
 
 interface UpdateMemoriesModalProps {
   isOpen: boolean;
@@ -19,7 +20,8 @@ interface UpdateMemoriesModalProps {
   handleInputChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
-  handleFormSubmit: () => void;
+  memoryId: string; // ID aktuální vzpomínky
+  fetchUpdatedMemory: () => void; // Callback na obnovení dat
 }
 
 const UpdateMemoriesModal: React.FC<UpdateMemoriesModalProps> = ({
@@ -27,8 +29,53 @@ const UpdateMemoriesModal: React.FC<UpdateMemoriesModalProps> = ({
   onClose,
   formData,
   handleInputChange,
-  handleFormSubmit,
+  memoryId,
+  fetchUpdatedMemory,
 }) => {
+  const handleFormSubmit = async () => {
+    if (!formData || !memoryId) {
+      console.error("Form data or memory ID is missing.");
+      return;
+    }
+
+    try {
+      const requestPayload = {
+        UserId: formData.userId,
+        MemoryName: formData.memoryName,
+        Description: formData.description,
+        NewImages: [], // Zatím prázdné, pokud nepodporujeme nahrávání nových obrázků
+        ExistingImageIds: formData.images.map((image) => image.id),
+        Reminder: formData.reminder,
+      };
+
+      const formDataRequest = new FormData();
+      formDataRequest.append("UserId", requestPayload.UserId);
+      formDataRequest.append("MemoryName", requestPayload.MemoryName || "");
+      formDataRequest.append("Description", requestPayload.Description || "");
+      formDataRequest.append("Reminder", requestPayload.Reminder || "");
+
+      requestPayload.ExistingImageIds.forEach((id) =>
+        formDataRequest.append("ExistingImageIds", id)
+      );
+
+      requestPayload.NewImages.forEach((file) =>
+        formDataRequest.append("NewImages", file)
+      );
+
+      const response = await updateMemoryById(memoryId, formDataRequest);
+
+      console.log("Memory updated successfully:", response.data);
+
+      // Aktualizace dat na frontendové straně
+      fetchUpdatedMemory();
+
+      // Zavření modalu
+      onClose();
+    } catch (error) {
+      console.error("Error updating memory:", error);
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} placement="top-center" onOpenChange={onClose}>
       <ModalContent>
