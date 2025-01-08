@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardHeader, CardBody, Image, Button } from "@nextui-org/react";
-import {
-  getMemoryById,
-  updateMemoryById,
-} from "../../../Api/Client/Endpoints/UserMemoryApi";
+import { getMemoryById } from "../../../Api/Client/Endpoints/UserMemoryApi";
 import Loader from "../../../Components/Loaders/Loader";
 import UpdateMemoriesModal from "./UpdateMemoryModal";
 
@@ -33,7 +30,7 @@ function SingleMemoryPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [formData, setFormData] = useState<UserMemory | null>(null);
+  const [memoryToUpdate, setMemoryToUpdate] = useState<UserMemory | null>(null);
 
   const fetchMemory = async () => {
     try {
@@ -48,7 +45,7 @@ function SingleMemoryPage() {
       if (!response || !response.data) {
         throw new Error("Failed to fetch the memory.");
       }
-
+      console.log("Response data:", response.data);
       setMemory(response.data);
     } catch (err: any) {
       setError(err.message || "An error occurred while fetching the memory.");
@@ -56,7 +53,7 @@ function SingleMemoryPage() {
       setLoading(false);
     }
   };
-
+  //TODO: MULTIPLE REQUESTS AT ONCE!!!
   useEffect(() => {
     if (!memoryId) {
       alert("Memory id is required");
@@ -65,57 +62,21 @@ function SingleMemoryPage() {
   }, [memoryId]);
 
   const handleEditClick = () => {
-    setFormData(memory); // Pre-fill the form with current memory data
+    setMemoryToUpdate(memory);
     setIsModalOpen(true); // Open the modal
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setFormData(null);
+    setMemoryToUpdate(null);
   };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (!formData) return;
+    if (!memoryToUpdate) return;
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleFormSubmit = async () => {
-    if (!formData || !memoryId) {
-      console.error("Form data or memory ID is missing.");
-      return;
-    }
-
-    try {
-      const requestPayload = {
-        UserId: formData.userId,
-        MemoryName: formData.memoryName,
-        Description: formData.description,
-        NewImages: [], // Zatím prázdné, pokud nepodporujeme nahrávání nových obrázků
-        ExistingImageIds: formData.images.map((image) => image.id),
-        Reminder: formData.reminder,
-      };
-
-      const formDataRequest = new FormData();
-      formDataRequest.append("UserId", requestPayload.UserId);
-      formDataRequest.append("MemoryName", requestPayload.MemoryName || "");
-      formDataRequest.append("Description", requestPayload.Description || "");
-      formDataRequest.append("Reminder", requestPayload.Reminder || "");
-
-      requestPayload.ExistingImageIds.forEach((id) =>
-        formDataRequest.append("ExistingImageIds", id)
-      );
-
-      await updateMemoryById(memoryId, formDataRequest);
-
-      console.log("Memory updated successfully");
-      await fetchMemory(); // Reload updated memory data
-      handleCloseModal(); // Close modal after successful update
-    } catch (error) {
-      console.error("Error updating memory:", error);
-    }
+    setMemoryToUpdate({ ...memoryToUpdate, [name]: value });
   };
 
   if (loading) {
@@ -182,7 +143,7 @@ function SingleMemoryPage() {
       <UpdateMemoriesModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        formData={formData}
+        memoryToUpdate={memoryToUpdate}
         handleInputChange={handleInputChange}
         memoryId={memoryId || ""} // Pass memoryId to modal
         fetchUpdatedMemory={fetchMemory} // Reload memory data after update
