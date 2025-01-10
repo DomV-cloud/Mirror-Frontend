@@ -37,6 +37,7 @@ const UpdateMemoriesModal: React.FC<UpdateMemoriesModalProps> = ({
   const [existingImages, setExistingImages] = useState(
     memoryToUpdate?.images || []
   );
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
   const [alert, setAlert] = useState<{
     type: "success" | "error";
     message: string;
@@ -50,6 +51,13 @@ const UpdateMemoriesModal: React.FC<UpdateMemoriesModalProps> = ({
 
   const handleExistingImageRemove = (id: string) => {
     setExistingImages(existingImages.filter((image) => image.id !== id));
+    setImagesToDelete([...imagesToDelete, id]);
+  };
+
+  const handleNewImageRemove = (index: number) => {
+    const updatedNewImages = [...newImages];
+    updatedNewImages.splice(index, 1);
+    setNewImages(updatedNewImages);
   };
 
   const handleFormSubmit = async () => {
@@ -67,7 +75,7 @@ const UpdateMemoriesModal: React.FC<UpdateMemoriesModalProps> = ({
         MemoryName: memoryToUpdate.memoryName,
         Description: memoryToUpdate.description,
         NewImages: newImages,
-        ExistingImageIds: existingImages.map((image) => image.id),
+        ImagesToDelete: imagesToDelete,
         Reminder: memoryToUpdate.reminder,
       };
 
@@ -83,10 +91,12 @@ const UpdateMemoriesModal: React.FC<UpdateMemoriesModalProps> = ({
       );
       memoryToUpdateRequest.append("Reminder", requestPayload.Reminder || "");
 
-      requestPayload.ExistingImageIds.forEach((id) =>
-        memoryToUpdateRequest.append("ExistingImageIds", id)
+      // Přidání obrázků k odstranění
+      requestPayload.ImagesToDelete.forEach((id) =>
+        memoryToUpdateRequest.append("ImagesToDelete", id)
       );
 
+      // Přidání nových obrázků
       requestPayload.NewImages.forEach((file) =>
         memoryToUpdateRequest.append("NewImages", file)
       );
@@ -100,7 +110,6 @@ const UpdateMemoriesModal: React.FC<UpdateMemoriesModalProps> = ({
       setAlert({ type: "success", message: "Memory updated successfully!" });
 
       fetchUpdatedMemory();
-
       onClose();
     } catch (error) {
       setAlert({
@@ -114,8 +123,9 @@ const UpdateMemoriesModal: React.FC<UpdateMemoriesModalProps> = ({
   useEffect(() => {
     if (memoryToUpdate) {
       setExistingImages(memoryToUpdate.images || []);
+      setImagesToDelete([]); // Reset odstraněných obrázků při novém načtení
+      setNewImages([]); // Reset nově nahraných obrázků
     }
-    console.log("Memory", memoryToUpdate);
   }, [memoryToUpdate]);
 
   return (
@@ -123,7 +133,6 @@ const UpdateMemoriesModal: React.FC<UpdateMemoriesModalProps> = ({
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">Update Memory</ModalHeader>
         <ModalBody>
-          {/*Here I would make alone-stand component */}
           {alert && (
             <Alert color={alert.type === "success" ? "success" : "error"}>
               {alert.message}
@@ -162,28 +171,24 @@ const UpdateMemoriesModal: React.FC<UpdateMemoriesModalProps> = ({
             {existingImages.length === 0 ? (
               <p className="text-sm text-gray-500">No images available.</p>
             ) : (
-              <div
-                className="max-h-40 overflow-y-auto space-y-2"
-                style={{ scrollbarWidth: "thin" }}>
-                <ul className="list-disc pl-4 space-y-2">
-                  {existingImages.map((image) => (
-                    <li
-                      key={image.id}
-                      className="flex justify-between items-center">
-                      <span className="text-sm text-gray-800">
-                        {image.fileName}
-                      </span>
-                      <Button
-                        color="danger"
-                        size="sm"
-                        variant="flat"
-                        onPress={() => handleExistingImageRemove(image.id)}>
-                        Remove
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ul className="list-disc pl-4 space-y-2">
+                {existingImages.map((image) => (
+                  <li
+                    key={image.id}
+                    className="flex justify-between items-center">
+                    <span className="text-sm text-gray-800">
+                      {image.fileName}
+                    </span>
+                    <Button
+                      color="danger"
+                      size="sm"
+                      variant="flat"
+                      onPress={() => handleExistingImageRemove(image.id)}>
+                      Remove
+                    </Button>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
 
