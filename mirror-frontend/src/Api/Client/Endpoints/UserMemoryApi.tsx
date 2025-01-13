@@ -1,6 +1,7 @@
 import axios from "axios";
 import { API_BASE_URL } from "../../../Configuration/apiConstants";
 import {
+  MEMORY_DELETE_BY_ID,
   MEMORY_GET_BY_ID,
   MEMORY_PUT_BY_ID,
 } from "../../../Configuration/ApiEndpointUri/UserMemoryUri";
@@ -24,4 +25,9 @@ export const updateMemoryById = (memoryId: string, formData: FormData) => {
       "Content-Type": "multipart/form-data",
     },
   });
+};
+
+export const deleteMemoryById = (memoryId: string) => {
+  const url = MEMORY_DELETE_BY_ID.replace("{memoryId}", memoryId);
+  return api.delete(url);
 };

@@ -171,24 +171,29 @@ const UpdateMemoriesModal: React.FC<UpdateMemoriesModalProps> = ({
             {existingImages.length === 0 ? (
               <p className="text-sm text-gray-500">No images available.</p>
             ) : (
-              <ul className="list-disc pl-4 space-y-2">
-                {existingImages.map((image) => (
-                  <li
-                    key={image.id}
-                    className="flex justify-between items-center">
-                    <span className="text-sm text-gray-800">
-                      {image.fileName}
-                    </span>
-                    <Button
-                      color="danger"
-                      size="sm"
-                      variant="flat"
-                      onPress={() => handleExistingImageRemove(image.id)}>
-                      Remove
-                    </Button>
-                  </li>
-                ))}
-              </ul>
+              <div
+                className="overflow-y-auto max-h-40 border border-gray-300 rounded-md p-2"
+                style={{ maxHeight: "160px" }} // Nastavení maximální výšky v px
+              >
+                <ul className="list-disc pl-4 space-y-2">
+                  {existingImages.map((image) => (
+                    <li
+                      key={image.id}
+                      className="flex justify-between items-center">
+                      <span className="text-sm text-gray-800">
+                        {image.fileName}
+                      </span>
+                      <Button
+                        color="danger"
+                        size="sm"
+                        variant="flat"
+                        onPress={() => handleExistingImageRemove(image.id)}>
+                        Remove
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
 

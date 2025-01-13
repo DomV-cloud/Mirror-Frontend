@@ -1,9 +1,24 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Card, CardHeader, CardBody, Image, Button } from "@nextui-org/react";
-import { getMemoryById } from "../../../Api/Client/Endpoints/UserMemoryApi";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Image,
+  Button,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "@nextui-org/react";
+import {
+  deleteMemoryById,
+  getMemoryById,
+} from "../../../Api/Client/Endpoints/UserMemoryApi";
 import Loader from "../../../Components/Loaders/Loader";
 import UpdateMemoriesModal from "./UpdateMemoryModal";
+import ConfirmModal from "../../../Components/Modals/ConfirmModal";
 
 interface ImageData {
   id: string;
@@ -31,6 +46,8 @@ function SingleMemoryPage() {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [memoryToUpdate, setMemoryToUpdate] = useState<UserMemory | null>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(null);
 
   const fetchMemory = async () => {
     try {
@@ -53,7 +70,7 @@ function SingleMemoryPage() {
       setLoading(false);
     }
   };
-  //TODO: MULTIPLE REQUESTS AT ONCE!!!
+
   useEffect(() => {
     if (!memoryId) {
       alert("Memory id is required");
@@ -64,6 +81,44 @@ function SingleMemoryPage() {
   const handleEditClick = () => {
     setMemoryToUpdate(memory);
     setIsModalOpen(true); // Open the modal
+  };
+  const handleDeleteClick = async () => {
+    if (!selectedMemoryId) {
+      console.error("No memory ID selected.");
+      return;
+    }
+
+    try {
+      await deleteMemoryById(selectedMemoryId);
+      console.log(`Memory with ID ${selectedMemoryId} has been deleted.`);
+      closeConfirmModal();
+      fetchUpdatedData(); // Funkce pro aktualizaci dat
+    } catch (error) {
+      console.error("Error deleting memory:", error);
+    }
+  };
+
+  const fetchUpdatedData = async () => {
+    try {
+      //await fetchMemories(); // Znovu načte vzpomínky z API
+      console.log("Data successfully updated.");
+    } catch (error) {
+      console.error("Error fetching updated data:", error);
+    }
+  };
+
+  const openConfirmModal = (id?: string) => {
+    if (!id) {
+      console.error("Memory ID is undefined or invalid.");
+      return;
+    }
+    setSelectedMemoryId(id);
+    setIsConfirmModalOpen(true);
+  };
+
+  const closeConfirmModal = () => {
+    setSelectedMemoryId(null);
+    setIsConfirmModalOpen(false);
   };
 
   const handleCloseModal = () => {
@@ -118,6 +173,13 @@ function SingleMemoryPage() {
         <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
           <h4 className="font-bold text-lg">{memory.memoryName}</h4>
           <p className="text-sm text-default-500">{memory.reminder}</p>
+          <Button
+            color="danger"
+            size="sm"
+            variant="flat"
+            onPress={() => openConfirmModal(memoryId)}>
+            Delete
+          </Button>
         </CardHeader>
         <CardBody className="py-2 px-4">
           <Image
@@ -139,6 +201,16 @@ function SingleMemoryPage() {
           </Button>
         </CardBody>
       </Card>
+
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={closeConfirmModal}
+        onConfirm={handleDeleteClick}
+        title="Confirm Deletion"
+        message="Are you sure you want to delete this memory? This action cannot be undone."
+        confirmButtonText="Delete"
+        cancelButtonText="Cancel"
+      />
 
       <UpdateMemoriesModal
         isOpen={isModalOpen}
