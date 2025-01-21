@@ -1,5 +1,6 @@
 import { ImageData } from "../Image/ImageDataType";
 export interface UserMemory {
+  Id: string;
   userId: string;
   memoryId: string;
   memoryName: string;

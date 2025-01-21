@@ -5,7 +5,6 @@ import Layout from "../Components/Layout";
 import NotFound from "../Pages/StatusPages/NotFoundPage/NotFound";
 import LoginPage from "../Pages/LoginPage/Login";
 import Register from "../Pages/RegisterPage/Register";
-import SingleMemoryPage from "../Pages/SidebarPages/MemoriesPage/SingleMemoryPage";
 import MemoryPage from "../Pages/SidebarPages/MemoriesPage/MemoriesPage";
 
 const Home = lazy(() => import("../Pages/SidebarPages/HomePage"));
@@ -24,7 +23,6 @@ const MainRoutes = () => {
             <Route path="/help" element={<Help />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/users/:userId/memories" element={<MemoryPage />} />
-            <Route path="/memories/:memoryId" element={<SingleMemoryPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
