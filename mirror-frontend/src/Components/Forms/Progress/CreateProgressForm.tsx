@@ -1,14 +1,13 @@
 import { useState } from "react";
-import apiClient from '../../Api/Client/ApiClient';
 import { useNavigate } from "react-router-dom"; // Pro navigaci
-import { createProgress } from "../../Api/Client/Endpoints/progressValueApi";
+import { createProgress } from "../../../Api/Client/Endpoints/progressValueApi";
 
 type CreateProgressFormProps = {
   onClose: () => void;
 };
 
 type ProgressValueDto = {
-  id: number; // Lokální ID pro manipulaci
+  id: number;
   ProgressColumnHead: string;
   ProgressColumnValue: string;
   ProgressDate_Day: number;
@@ -19,10 +18,10 @@ type ProgressValueDto = {
 function CreateProgressForm({ onClose }: CreateProgressFormProps) {
   const [progressName, setProgressName] = useState("");
   const [progressValues, setProgressValues] = useState<ProgressValueDto[]>([]);
-  const [userId] = useState("6D3080D4-5DBF-4549-8AC1-77713785DE2A"); // Simulovaný GUID, nahradit dynamickým uživatelem
+  const [userId] = useState("6D3080D4-5DBF-4549-8AC1-77713785DE2A");
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate(); // React Router navigace
+  const navigate = useNavigate();
 
   const handleAddProgressValue = () => {
     setProgressValues([
@@ -42,7 +41,11 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
     setProgressValues(progressValues.filter((value) => value.id !== id));
   };
 
-  const handleUpdateProgressValue = (id: number, field: keyof ProgressValueDto, value: any) => {
+  const handleUpdateProgressValue = (
+    id: number,
+    field: keyof ProgressValueDto,
+    value: any
+  ) => {
     setProgressValues(
       progressValues.map((item) =>
         item.id === id ? { ...item, [field]: value } : item
@@ -62,7 +65,7 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
 
     try {
       const response = await createProgress(dataToSubmit);
-      
+
       alert("Progress successfully created!");
       const id = response.data.createdProgressId;
 
@@ -83,7 +86,9 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
     <form onSubmit={handleSubmit} className="mt-4">
       {loading && <p>Loading...</p>}
 
-      <label htmlFor="progressName" className="block text-sm font-medium text-gray-700">
+      <label
+        htmlFor="progressName"
+        className="block text-sm font-medium text-gray-700">
         Progress Name
       </label>
       <input
@@ -105,7 +110,11 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
               placeholder="Column Head"
               value={value.ProgressColumnHead}
               onChange={(e) =>
-                handleUpdateProgressValue(value.id, "ProgressColumnHead", e.target.value)
+                handleUpdateProgressValue(
+                  value.id,
+                  "ProgressColumnHead",
+                  e.target.value
+                )
               }
               className="block w-1/4 rounded-md border-gray-300 shadow-sm sm:text-sm"
             />
@@ -114,7 +123,11 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
               placeholder="Column Value"
               value={value.ProgressColumnValue}
               onChange={(e) =>
-                handleUpdateProgressValue(value.id, "ProgressColumnValue", e.target.value)
+                handleUpdateProgressValue(
+                  value.id,
+                  "ProgressColumnValue",
+                  e.target.value
+                )
               }
               className="block w-1/4 rounded-md border-gray-300 shadow-sm sm:text-sm"
             />
@@ -123,7 +136,11 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
               placeholder="Day"
               value={value.ProgressDate_Day}
               onChange={(e) =>
-                handleUpdateProgressValue(value.id, "ProgressDate_Day", parseInt(e.target.value))
+                handleUpdateProgressValue(
+                  value.id,
+                  "ProgressDate_Day",
+                  parseInt(e.target.value)
+                )
               }
               className="block w-1/6 rounded-md border-gray-300 shadow-sm sm:text-sm"
             />
@@ -132,7 +149,11 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
               placeholder="Month"
               value={value.ProgressDate_Month}
               onChange={(e) =>
-                handleUpdateProgressValue(value.id, "ProgressDate_Month", parseInt(e.target.value))
+                handleUpdateProgressValue(
+                  value.id,
+                  "ProgressDate_Month",
+                  parseInt(e.target.value)
+                )
               }
               className="block w-1/6 rounded-md border-gray-300 shadow-sm sm:text-sm"
             />
@@ -141,15 +162,18 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
               placeholder="Year"
               value={value.ProgressDate_Year}
               onChange={(e) =>
-                handleUpdateProgressValue(value.id, "ProgressDate_Year", parseInt(e.target.value))
+                handleUpdateProgressValue(
+                  value.id,
+                  "ProgressDate_Year",
+                  parseInt(e.target.value)
+                )
               }
               className="block w-1/6 rounded-md border-gray-300 shadow-sm sm:text-sm"
             />
             <button
               type="button"
               onClick={() => handleRemoveProgressValue(value.id)}
-              className="inline-flex items-center px-2 py-1 text-sm font-semibold text-red-600 hover:text-red-800"
-            >
+              className="inline-flex items-center px-2 py-1 text-sm font-semibold text-red-600 hover:text-red-800">
               Remove
             </button>
           </div>
@@ -160,8 +184,7 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
         <button
           type="button"
           onClick={handleAddProgressValue}
-          className="inline-flex items-center px-2 py-1 text-sm font-semibold text-blue-600 hover:text-blue-800"
-        >
+          className="inline-flex items-center px-2 py-1 text-sm font-semibold text-blue-600 hover:text-blue-800">
           Add Progress Value
         </button>
       </div>
@@ -170,15 +193,13 @@ function CreateProgressForm({ onClose }: CreateProgressFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex w-full justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
-        >
+          className="inline-flex w-full justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto">
           {loading ? "Saving..." : "Save"}
         </button>
         <button
           type="button"
           onClick={onClose}
-          className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-        >
+          className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
           Cancel
         </button>
       </div>

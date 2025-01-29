@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ModalForm from "./Modals/FormModal";
+import CreateProgressModal from "./Modals/Progress/CreateProgressModal";
 import PlusIcon from "./Icons/PlusIcons";
 
 function AddChartGrid() {
@@ -27,12 +27,13 @@ function AddChartGrid() {
           cursor-pointer
           rounded-md
         "
-        onClick={handleOpenDialog}
-      >
+        onClick={handleOpenDialog}>
         <PlusIcon />
       </div>
-      
-      {showDialog && <ModalForm opened={showDialog} onClose={handleCloseDialog} />}
+
+      {showDialog && (
+        <CreateProgressModal opened={showDialog} onClose={handleCloseDialog} />
+      )}
     </div>
   );
 }

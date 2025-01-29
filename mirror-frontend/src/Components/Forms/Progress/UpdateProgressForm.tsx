@@ -1,7 +1,7 @@
 import { useState } from "react";
-import apiClient from "../../Api/Client/ApiClient";
 import { useNavigate } from "react-router-dom";
-import { Progress } from "../../Types/Progress/ProgressType";
+import { Progress } from "../../../Types/Progress/ProgressType";
+import apiClient from "../../../Api/Client/ApiClient";
 
 type ProgressValueDTO = {
   progressColumnValue: string;
@@ -22,7 +22,15 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
   );
   const [progressValues, setProgressValues] = useState<
     Record<string, ProgressValueDTO[]>
-  >(progress.progressValue || {});
+  >(
+    progress.progressValue?.reduce((acc, val) => {
+      if (!acc[val.progressColumnValue]) {
+        acc[val.progressColumnValue] = [];
+      }
+      acc[val.progressColumnValue].push(val);
+      return acc;
+    }, {} as Record<string, ProgressValueDTO[]>) || {}
+  );
   const [description, setDescription] = useState(progress.description || "");
   const [loading, setLoading] = useState(false);
 
@@ -35,7 +43,9 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
   };
 
   const handleRemoveColumnHead = (column: string) => {
-    const updatedColumns = progressColumnHeads.filter((head) => head !== column);
+    const updatedColumns = progressColumnHeads.filter(
+      (head) => head !== column
+    );
     const updatedValues = { ...progressValues };
     delete updatedValues[column];
     setProgressColumnHeads(updatedColumns);
@@ -84,7 +94,7 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
       description,
       progressName,
       progressColumnHead: progressColumnHeads.join(","),
-      progressValue: progressValues,
+      progressValue: Object.values(progressValues).flat(),
     };
 
     try {
@@ -108,7 +118,9 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
     <form onSubmit={handleSubmit} className="mt-4">
       {loading && <p>Loading...</p>}
 
-      <label htmlFor="progressName" className="block text-sm font-medium text-gray-700">
+      <label
+        htmlFor="progressName"
+        className="block text-sm font-medium text-gray-700">
         Progress Name
       </label>
       <input
@@ -121,7 +133,9 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
         placeholder="Enter progress name"
       />
 
-      <label htmlFor="description" className="block mt-4 text-sm font-medium text-gray-700">
+      <label
+        htmlFor="description"
+        className="block mt-4 text-sm font-medium text-gray-700">
         Description
       </label>
       <textarea
@@ -143,8 +157,7 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
               <button
                 type="button"
                 onClick={() => handleRemoveColumnHead(column)}
-                className="inline-flex items-center px-2 py-1 text-sm font-semibold text-red-600 hover:text-red-800"
-              >
+                className="inline-flex items-center px-2 py-1 text-sm font-semibold text-red-600 hover:text-red-800">
                 Remove Column
               </button>
             </div>
@@ -155,7 +168,12 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
                   placeholder="Column Value"
                   value={value.progressColumnValue}
                   onChange={(e) =>
-                    handleUpdateProgressValue(column, index, "progressColumnValue", e.target.value)
+                    handleUpdateProgressValue(
+                      column,
+                      index,
+                      "progressColumnValue",
+                      e.target.value
+                    )
                   }
                   className="block w-1/3 rounded-md border-gray-300 shadow-sm sm:text-sm"
                 />
@@ -164,7 +182,12 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
                   placeholder="Day"
                   value={value.progressDate_Day}
                   onChange={(e) =>
-                    handleUpdateProgressValue(column, index, "progressDate_Day", parseInt(e.target.value))
+                    handleUpdateProgressValue(
+                      column,
+                      index,
+                      "progressDate_Day",
+                      parseInt(e.target.value)
+                    )
                   }
                   className="block w-1/6 rounded-md border-gray-300 shadow-sm sm:text-sm"
                 />
@@ -173,7 +196,12 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
                   placeholder="Month"
                   value={value.progressDate_Month}
                   onChange={(e) =>
-                    handleUpdateProgressValue(column, index, "progressDate_Month", parseInt(e.target.value))
+                    handleUpdateProgressValue(
+                      column,
+                      index,
+                      "progressDate_Month",
+                      parseInt(e.target.value)
+                    )
                   }
                   className="block w-1/6 rounded-md border-gray-300 shadow-sm sm:text-sm"
                 />
@@ -182,15 +210,19 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
                   placeholder="Year"
                   value={value.progressDate_Year}
                   onChange={(e) =>
-                    handleUpdateProgressValue(column, index, "progressDate_Year", parseInt(e.target.value))
+                    handleUpdateProgressValue(
+                      column,
+                      index,
+                      "progressDate_Year",
+                      parseInt(e.target.value)
+                    )
                   }
                   className="block w-1/6 rounded-md border-gray-300 shadow-sm sm:text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => handleRemoveProgressValue(column, index)}
-                  className="inline-flex items-center px-2 py-1 text-sm font-semibold text-red-600 hover:text-red-800"
-                >
+                  className="inline-flex items-center px-2 py-1 text-sm font-semibold text-red-600 hover:text-red-800">
                   Remove
                 </button>
               </div>
@@ -198,8 +230,7 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
             <button
               type="button"
               onClick={() => handleAddProgressValue(column)}
-              className="inline-flex items-center px-2 py-1 text-sm font-semibold text-blue-600 hover:text-blue-800 mt-2"
-            >
+              className="inline-flex items-center px-2 py-1 text-sm font-semibold text-blue-600 hover:text-blue-800 mt-2">
               Add Value
             </button>
           </div>
@@ -207,8 +238,7 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
         <button
           type="button"
           onClick={handleAddColumnHead}
-          className="inline-flex items-center px-2 py-1 text-sm font-semibold text-blue-600 hover:text-blue-800 mt-2"
-        >
+          className="inline-flex items-center px-2 py-1 text-sm font-semibold text-blue-600 hover:text-blue-800 mt-2">
           Add Column Head
         </button>
       </div>
@@ -218,15 +248,13 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex w-full justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto"
-        >
+          className="inline-flex w-full justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto">
           {loading ? "Saving..." : "Save"}
         </button>
         <button
           type="button"
           onClick={onClose}
-          className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-        >
+          className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
           Cancel
         </button>
       </div>

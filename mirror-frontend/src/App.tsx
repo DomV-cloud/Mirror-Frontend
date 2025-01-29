@@ -1,10 +1,10 @@
-import AppRoutes from './Routes/AppRoutes'
+import MainRoutes from './Routes/MainRoutes'
 
 function App() {
 
   return (
     <div className="App">
-      <AppRoutes />
+      <MainRoutes />
     </div>
   )
 }

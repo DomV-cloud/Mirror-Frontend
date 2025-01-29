@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Chart from "react-apexcharts";
 import { Progress } from "../../Types/Progress/ProgressType";
 import { getProgressById } from "../../Api/Client/Endpoints/ProgressById";
-import UpdateProgressModal from "../Modals/UpdateProgressModal";
+import UpdateProgressModal from "../Modals/Progress/UpdateProgressModal";
 
 const AreaChart = () => {
   const { progressId } = useParams();
@@ -16,7 +16,9 @@ const AreaChart = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>("all");
   const [selectedColumnHead, setSelectedColumnHead] = useState<string>("all");
   const [showDialog, setShowDialog] = useState(false);
-  const [selectedProgress, setSelectedProgress] = useState<Progress | null>(null);
+  const [selectedProgress, setSelectedProgress] = useState<Progress | null>(
+    null
+  );
 
   const handleOpenDialog = () => setShowDialog(true);
   const handleCloseDialog = () => setShowDialog(false);
@@ -75,7 +77,10 @@ const AreaChart = () => {
 
   const currentMonthData = useMemo(() => {
     return (
-      dataByMonth[selectedColumnHead]?.[selectedMonth] || { value: [], date: [] }
+      dataByMonth[selectedColumnHead]?.[selectedMonth] || {
+        value: [],
+        date: [],
+      }
     );
   }, [selectedColumnHead, selectedMonth, dataByMonth]);
 
@@ -95,11 +100,20 @@ const AreaChart = () => {
     tooltip: { enabled: true, x: { show: true } },
     fill: {
       type: "gradient",
-      gradient: { opacityFrom: 0.55, opacityTo: 0, shade: "#1C64F2", gradientToColors: ["#1C64F2"] },
+      gradient: {
+        opacityFrom: 0.55,
+        opacityTo: 0,
+        shade: "#1C64F2",
+        gradientToColors: ["#1C64F2"],
+      },
     },
     dataLabels: { enabled: false },
     stroke: { width: 6 },
-    grid: { show: false, strokeDashArray: 4, padding: { left: 2, right: 2, top: 0 } },
+    grid: {
+      show: false,
+      strokeDashArray: 4,
+      padding: { left: 2, right: 2, top: 0 },
+    },
     xaxis: {
       categories: categories.length > 0 ? categories : ["No data available"],
       labels: { show: true },
@@ -109,7 +123,9 @@ const AreaChart = () => {
     yaxis: { title: { text: "Time (MM:SS)" } },
   };
 
-  const chartSeries = [{ name: "Your Progress", data: chartData, color: "#1A56DB" }];
+  const chartSeries = [
+    { name: "Your Progress", data: chartData, color: "#1A56DB" },
+  ];
 
   return (
     <div className="w-full bg-white rounded-lg shadow dark:bg-gray-800 p-4 md:p-6">
@@ -124,8 +140,7 @@ const AreaChart = () => {
         </div>
         <button
           onClick={handleOpenDialog}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-        >
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg">
           Add Data
         </button>
       </div>
@@ -138,15 +153,16 @@ const AreaChart = () => {
 
       <div className="flex space-x-4 py-4">
         <div>
-          <label htmlFor="column-head" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="column-head"
+            className="block text-sm font-medium text-gray-700">
             Select Column Head
           </label>
           <select
             id="column-head"
             value={selectedColumnHead}
             onChange={(e) => setSelectedColumnHead(e.target.value)}
-            className="px-4 py-2 rounded border border-gray-300"
-          >
+            className="px-4 py-2 rounded border border-gray-300">
             {Object.keys(dataByMonth).map((columnHead) => (
               <option key={columnHead} value={columnHead}>
                 {columnHead}
@@ -156,15 +172,16 @@ const AreaChart = () => {
         </div>
 
         <div>
-          <label htmlFor="month" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="month"
+            className="block text-sm font-medium text-gray-700">
             Select Month
           </label>
           <select
             id="month"
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
-            className="px-4 py-2 rounded border border-gray-300"
-          >
+            className="px-4 py-2 rounded border border-gray-300">
             <option value="all">All</option>
             {Object.keys(dataByMonth[selectedColumnHead] || {})
               .filter((key) => key !== "all")

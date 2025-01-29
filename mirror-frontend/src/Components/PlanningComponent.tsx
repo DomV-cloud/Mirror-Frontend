@@ -16,7 +16,7 @@ const PlanningComponent: React.FC<PlanningComponentProps> = ({
   );
 
   return (
-    <Card className="relative flex-1 bg-white shadow-lg border border-gray-200">
+    <Card className="relative flex-1 bg-white shadow-lg border border-gray-200 w-full">
       {/* Štítek nahoře vpravo */}
       <div className="absolute top-2 right-2 bg-blue-100 text-blue-600 text-sm font-semibold px-3 py-1 rounded-full shadow-sm">
         {measurementDay}
@@ -25,9 +25,11 @@ const PlanningComponent: React.FC<PlanningComponentProps> = ({
       <CardHeader className="border-b border-gray-200 p-4">
         <div className="text-lg font-semibold text-gray-800">
           <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
-              Next Measurement Countdown
-            </h2>
-          <p className="text-xs text-gray-500">Your current progress overview</p>
+            Next Measurement Countdown
+          </h2>
+          <p className="text-xs text-gray-500">
+            Your current progress overview
+          </p>
         </div>
       </CardHeader>
       <CardBody className="flex flex-col items-center justify-center p-6">
