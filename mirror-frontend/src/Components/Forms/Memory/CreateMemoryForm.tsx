@@ -138,6 +138,7 @@ const CreateMemoryForm: React.FC<CreateMemoryFormProps> = ({
           multiple
           accept="image/*"
           onChange={handleImageUpload}
+          lang="eng"
         />
         <div className="mt-4">
           {newImages.length > 0 && (

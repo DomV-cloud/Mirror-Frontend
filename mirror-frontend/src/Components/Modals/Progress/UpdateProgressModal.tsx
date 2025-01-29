@@ -1,14 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  DialogTitle,
-} from "@headlessui/react";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { Progress } from "../../../Types/Progress/ProgressType";
-import UpdateProgressForm from "../Forms/UpdateProgressForm";
+import UpdateProgressForm from "../../Forms/Progress/UpdateProgressForm";
 
 type ModalFormProps = {
   opened?: boolean;

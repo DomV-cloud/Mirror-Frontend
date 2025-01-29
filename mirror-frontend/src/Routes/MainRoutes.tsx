@@ -6,6 +6,8 @@ import NotFound from "../Pages/StatusPages/NotFoundPage/NotFound";
 import LoginPage from "../Pages/LoginPage/Login";
 import Register from "../Pages/RegisterPage/Register";
 import MemoryPage from "../Pages/SidebarPages/MemoriesPage/MemoriesPage";
+import AreaChart from "../Components/Charts/AreaChart";
+import MyProgressPage from "../Pages/MyProgressPage/MyProgressPage";
 
 const Home = lazy(() => import("../Pages/SidebarPages/HomePage"));
 const Help = lazy(() => import("../Pages/SidebarPages/HelpPage"));
@@ -23,6 +25,8 @@ const MainRoutes = () => {
             <Route path="/help" element={<Help />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/users/:userId/memories" element={<MemoryPage />} />
+            <Route path="/progress/:id" element={<AreaChart />} />
+            <Route path="/progresses" element={<MyProgressPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>

@@ -1,7 +1,5 @@
-import AreaChart from '../../Components/Charts/AreaChart'
+import AreaChart from "../../Components/Charts/AreaChart";
 
 export default function MyProgressPage() {
-  return (
-    <AreaChart />
-  )
+  return <AreaChart />;
 }
