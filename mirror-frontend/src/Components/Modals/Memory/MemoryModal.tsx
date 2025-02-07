@@ -10,11 +10,11 @@ import {
 import { UserMemory } from "../../../Types/Memory/MemoryType";
 import UpdateMemoryForm from "../../Forms/Memory/UpdateMemoryForm";
 import CreateMemoryForm from "../../Forms/Memory/CreateMemoryForm";
-
+// type ActionType = "update" | "create"; is better to use
 interface MemoryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  memoryToUpdate: UserMemory | null;
+  memoryToUpdate?: UserMemory | null;
   handleInputChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;

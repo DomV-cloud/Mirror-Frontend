@@ -1,4 +1,3 @@
-import PlanningComponent from "./PlanningComponent";
 import {
   Button,
   Card,
@@ -9,15 +8,26 @@ import {
 } from "@nextui-org/react";
 import FireIcon from "./Icons/FireIcon";
 import { Progress } from "../Types/Progress/ProgressType";
+import { useNavigate } from "react-router-dom";
 
 type ProgressCardProps = {
   displayActiveProgress: Progress;
+  onEdit: () => void; // Přidáno pro editaci
 };
 export default function ProgressCard({
   displayActiveProgress,
+  onEdit,
 }: ProgressCardProps) {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/progresses/${displayActiveProgress.id}`);
+  };
+
   return (
-    <div className="w-full flex sm:flex-col md:flex-col lg:flex-row gap-4">
+    <div
+      className="w-full flex sm:flex-col md:flex-col lg:flex-row gap-4 shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+      onClick={handleCardClick}>
       <Card className="flex-1 bg-white shadow-lg border border-gray-200">
         <CardHeader className="flex justify-between items-center border-b border-gray-200 p-4">
           <div>
@@ -79,8 +89,8 @@ export default function ProgressCard({
             </div>
           </div>
           <div>
-            <Button size="sm" variant="shadow" color="primary">
-              Details
+            <Button onPress={onEdit} size="sm" variant="shadow" color="primary">
+              Edit
             </Button>
           </div>
         </CardFooter>

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Progress } from "../../../Types/Progress/ProgressType";
 import apiClient from "../../../Api/Client/ApiClient";
 
@@ -12,29 +11,35 @@ type ProgressValueDTO = {
 
 type UpdateProgressFormProps = {
   onClose: () => void;
-  progress: Progress; // Existující data pro úpravu
+  progress: Progress;
 };
 
 function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
   const [progressName, setProgressName] = useState(progress.progressName || "");
   const [progressColumnHeads, setProgressColumnHeads] = useState<string[]>(
-    Object.keys(progress.progressValue || {})
+    Object.keys(progress.sections || {})
   );
+
   const [progressValues, setProgressValues] = useState<
     Record<string, ProgressValueDTO[]>
-  >(
-    progress.progressValue?.reduce((acc, val) => {
-      if (!acc[val.progressColumnValue]) {
-        acc[val.progressColumnValue] = [];
+  >(() => {
+    const initialValues: Record<string, ProgressValueDTO[]> = {};
+
+    const progressValueObject = progress.sections || {};
+
+    for (const key in progressValueObject) {
+      const progressValuesForKey = progressValueObject[key];
+
+      if (progressValuesForKey && Array.isArray(progressValuesForKey)) {
+        initialValues[key] = progressValuesForKey;
       }
-      acc[val.progressColumnValue].push(val);
-      return acc;
-    }, {} as Record<string, ProgressValueDTO[]>) || {}
-  );
+    }
+
+    return initialValues;
+  });
+
   const [description, setDescription] = useState(progress.description || "");
   const [loading, setLoading] = useState(false);
-
-  const navigate = useNavigate();
 
   const handleAddColumnHead = () => {
     const newColumnHead = `Column${progressColumnHeads.length + 1}`;
@@ -94,12 +99,17 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
       description,
       progressName,
       progressColumnHead: progressColumnHeads.join(","),
-      progressValue: Object.values(progressValues).flat(),
+      progressValues: {
+        ...Object.keys(progressValues).reduce((acc: any, key) => {
+          acc[key] = progressValues[key];
+          return acc;
+        }, {}),
+      },
     };
 
     try {
       const response = await apiClient.put(
-        `progress/${progress.progressName}`,
+        `progresses/${progress.id}`,
         dataToSubmit
       );
       alert("Progress successfully updated!");

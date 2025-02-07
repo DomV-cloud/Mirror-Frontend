@@ -53,15 +53,6 @@ function MemoriesPage() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedMemoryId, setSelectedMemoryId] = useState<string | null>(null);
 
-  const navigate = useNavigate();
-
-  const handleRedirectClick = (memoryId: string | undefined) => {
-    if (!memoryId) {
-      return;
-    }
-    navigate(`/memories/${memoryId}`);
-  };
-
   const fetchMemories = async () => {
     try {
       setLoading(true);

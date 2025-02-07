@@ -4,6 +4,7 @@ import { createProgress } from "../../../Api/Client/Endpoints/progressValueApi";
 
 type CreateProgressFormProps = {
   onClose: () => void;
+  userId: string;
 };
 
 type ProgressValueDto = {

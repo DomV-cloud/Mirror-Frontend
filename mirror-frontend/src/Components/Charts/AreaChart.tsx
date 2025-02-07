@@ -20,13 +20,22 @@ const AreaChart = () => {
     null
   );
 
-  const handleOpenDialog = () => setShowDialog(true);
+  const handleOpenDialog = () => {
+    setShowDialog(true);
+    console.log(selectedProgress);
+  };
   const handleCloseDialog = () => setShowDialog(false);
 
   const fetchProgressData = async (id: string) => {
     try {
       const response = await getProgressById(id);
       const progress: Progress = response.data;
+
+      // Kontrola, že progressValue je platné pole
+      if (!Array.isArray(progress.sections)) {
+        console.error("Invalid progressValue format:", progress.sections);
+        return;
+      }
 
       const groupedData: Record<
         string,
@@ -35,9 +44,13 @@ const AreaChart = () => {
         all: { all: { value: [], date: [] } },
       };
 
-      Object.entries(progress.progressValue).forEach(([key, entries]) => {
-        entries.forEach((entry: any) => {
-          const columnHead = entry.progressColumnHead || "default";
+      // Iterace přes jednotlivé sekce
+      progress.sections.forEach((section) => {
+        const sectionName = section.sectionName || "default";
+
+        // Iterace přes jednotlivé hodnoty v sekci
+        section.progressValues.forEach((entry) => {
+          const columnHead = sectionName;
           const value = Number(entry.progressColumnValue.replace(":", "."));
           const date = `${entry.progressDate_Day}/${entry.progressDate_Month}/${entry.progressDate_Year}`;
           const month = `${entry.progressDate_Month}-${entry.progressDate_Year}`;
@@ -45,11 +58,11 @@ const AreaChart = () => {
           if (!groupedData[columnHead]) {
             groupedData[columnHead] = { all: { value: [], date: [] } };
           }
-
           if (!groupedData[columnHead][month]) {
             groupedData[columnHead][month] = { value: [], date: [] };
           }
 
+          // Přidání hodnot do příslušných skupin
           groupedData[columnHead][month].value.push(value);
           groupedData[columnHead][month].date.push(date);
 
@@ -72,7 +85,10 @@ const AreaChart = () => {
   };
 
   useEffect(() => {
-    if (progressId) fetchProgressData(progressId);
+    if (!progressId) {
+      return alert("No progress");
+    }
+    fetchProgressData(progressId);
   }, [progressId]);
 
   const currentMonthData = useMemo(() => {

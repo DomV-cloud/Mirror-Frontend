@@ -4,7 +4,7 @@ import { UserMemory } from "../../../Types/Memory/MemoryType";
 import { updateMemoryById } from "../../../Api/Client/Endpoints/UserMemoryApi";
 
 interface UpdateMemoryFormProps {
-  memoryToUpdate: UserMemory | null;
+  memoryToUpdate?: UserMemory | null;
   handleInputChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
