@@ -25,7 +25,7 @@ const MainRoutes = () => {
             <Route path="/help" element={<Help />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/users/:userId/memories" element={<MemoryPage />} />
-            <Route path="/progress/:id" element={<AreaChart />} />
+            <Route path="/progresses/:progressId" element={<AreaChart />} />
             <Route path="/progresses" element={<MyProgressPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

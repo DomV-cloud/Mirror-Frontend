@@ -4,7 +4,7 @@ import { UserMemory } from "../../../Types/Memory/MemoryType";
 import { updateMemoryById } from "../../../Api/Client/Endpoints/UserMemoryApi";
 
 interface UpdateMemoryFormProps {
-  memoryToUpdate: UserMemory | null;
+  memoryToUpdate?: UserMemory | null;
   handleInputChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -211,13 +211,6 @@ const UpdateMemoryForm: React.FC<UpdateMemoryFormProps> = ({
           className="w-full sm:w-auto"
           onPress={handleFormSubmit}>
           Update Memory
-        </Button>
-        <Button
-          color="danger"
-          variant="flat"
-          className="w-full sm:w-auto"
-          onPress={onClose}>
-          Close
         </Button>
       </div>
     </div>

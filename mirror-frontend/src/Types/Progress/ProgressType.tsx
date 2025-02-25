@@ -1,13 +1,9 @@
-export interface ProgressValue {
-  progressColumnValue: string;
-  progressDate_Day: number;
-  progressDate_Month: number;
-  progressDate_Year: number;
-}
+import { ProgressSection } from "../ProgressSection/ProgressSection";
 
 export interface Progress {
+  id: string;
   description?: string;
-  progressValue: ProgressValue[];
+  sections: ProgressSection[];
   progressName: string;
   isAchieved?: boolean; // possible duplication
   isActive?: boolean;
