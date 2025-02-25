@@ -212,13 +212,6 @@ const UpdateMemoryForm: React.FC<UpdateMemoryFormProps> = ({
           onPress={handleFormSubmit}>
           Update Memory
         </Button>
-        <Button
-          color="danger"
-          variant="flat"
-          className="w-full sm:w-auto"
-          onPress={onClose}>
-          Close
-        </Button>
       </div>
     </div>
   );

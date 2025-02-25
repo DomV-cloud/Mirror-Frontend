@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 type ProgressCardProps = {
   displayActiveProgress: Progress;
-  onEdit: () => void; // Přidáno pro editaci
+  onEdit: () => void;
 };
 export default function ProgressCard({
   displayActiveProgress,

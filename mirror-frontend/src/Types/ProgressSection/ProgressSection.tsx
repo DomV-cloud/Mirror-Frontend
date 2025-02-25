@@ -1,7 +1,7 @@
 import { ProgressValue } from "../ProgressValue/ProgressValue";
 
 export interface ProgressSection {
-  id: string;
+  sectionId: string;
   sectionName: string;
   progressValues: ProgressValue[];
 }

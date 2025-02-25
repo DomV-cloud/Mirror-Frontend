@@ -42,17 +42,12 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
           {action === "update" ? (
             <UpdateProgressForm
               onClose={onClose}
-              progress={progressToUpdate!} // Používáme `!` protože `progressToUpdate` je povinný při aktualizaci
+              progress={progressToUpdate!}
             />
           ) : (
             <CreateProgressForm userId={userId} onClose={onClose} />
           )}
         </ModalBody>
-        <ModalFooter>
-          <Button color="danger" variant="flat" onPress={onClose}>
-            Close
-          </Button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );

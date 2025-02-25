@@ -4,8 +4,8 @@ import { getUserProgressesById } from "../../Api/Client/Endpoints/UserApi";
 import ProgressCard from "../../Components/ProgressCard";
 import { Button } from "@nextui-org/react";
 import ProgressModal from "../../Components/Modals/Progress/ProgressModal";
+import { ActionType } from "../../Types/Action/ActionType";
 
-// Custom hook for fetching data
 const useFetchData = (userId: string) => {
   const [state, setState] = useState({
     progresses: [] as Progress[],
@@ -39,7 +39,7 @@ export default function MyProgressPage() {
   const { progresses, loading, error } = useFetchData(userId);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [action, setAction] = useState<"create" | "update">("create");
+  const [action, setAction] = useState<ActionType>("create");
   const [progressToUpdate, setProgressToUpdate] = useState<Progress | null>(
     null
   );

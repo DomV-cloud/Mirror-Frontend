@@ -1,12 +1,19 @@
 import { useState } from "react";
 import { Progress } from "../../../Types/Progress/ProgressType";
 import apiClient from "../../../Api/Client/ApiClient";
+import { ProgressSection } from "../../../Types/ProgressSection/ProgressSection";
 
 type ProgressValueDTO = {
   progressColumnValue: string;
   progressDate_Day: number;
   progressDate_Month: number;
   progressDate_Year: number;
+};
+
+type ProgressSectionDTO = {
+  sectionId: string;
+  sectionName: string;
+  progressValues: ProgressValueDTO[];
 };
 
 type UpdateProgressFormProps = {
@@ -16,95 +23,82 @@ type UpdateProgressFormProps = {
 
 function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
   const [progressName, setProgressName] = useState(progress.progressName || "");
-  const [progressColumnHeads, setProgressColumnHeads] = useState<string[]>(
-    Object.keys(progress.sections || {})
-  );
-
-  const [progressValues, setProgressValues] = useState<
-    Record<string, ProgressValueDTO[]>
-  >(() => {
-    const initialValues: Record<string, ProgressValueDTO[]> = {};
-
-    const progressValueObject = progress.sections || {};
-
-    for (const key in progressValueObject) {
-      const progressValuesForKey = progressValueObject[key];
-
-      if (progressValuesForKey && Array.isArray(progressValuesForKey)) {
-        initialValues[key] = progressValuesForKey;
-      }
-    }
-
-    return initialValues;
-  });
-
   const [description, setDescription] = useState(progress.description || "");
+  const [newSections, setNewSections] = useState<ProgressSection[]>(
+    progress.sections || []
+  );
+  const [sectionsToDelete, setSectionsToDelete] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleAddColumnHead = () => {
-    const newColumnHead = `Column${progressColumnHeads.length + 1}`;
-    setProgressColumnHeads([...progressColumnHeads, newColumnHead]);
-    setProgressValues({ ...progressValues, [newColumnHead]: [] });
-  };
-
-  const handleRemoveColumnHead = (column: string) => {
-    const updatedColumns = progressColumnHeads.filter(
-      (head) => head !== column
-    );
-    const updatedValues = { ...progressValues };
-    delete updatedValues[column];
-    setProgressColumnHeads(updatedColumns);
-    setProgressValues(updatedValues);
-  };
-
-  const handleAddProgressValue = (column: string) => {
-    const updatedColumnValues = [
-      ...(progressValues[column] || []),
+  const handleAddSection = () => {
+    setNewSections([
+      ...newSections,
       {
-        progressColumnValue: "",
-        progressDate_Day: 1,
-        progressDate_Month: 1,
-        progressDate_Year: 2024,
+        sectionId: "",
+        sectionName: `New Section ${newSections.length + 1}`,
+        progressValues: [],
       },
-    ];
-    setProgressValues({ ...progressValues, [column]: updatedColumnValues });
+    ]);
   };
 
-  const handleRemoveProgressValue = (column: string, index: number) => {
-    const updatedColumnValues = (progressValues[column] || []).filter(
-      (_, i) => i !== index
-    );
-    setProgressValues({ ...progressValues, [column]: updatedColumnValues });
+  const handleRemoveSection = (index: number, sectionId?: string) => {
+    if (sectionId) {
+      setSectionsToDelete([...sectionsToDelete, sectionId]);
+    }
+    setNewSections(newSections.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateSectionName = (index: number, value: string) => {
+    const updatedSections = [...newSections];
+    updatedSections[index].sectionName = value;
+    setNewSections(updatedSections);
+  };
+
+  const handleAddProgressValue = (sectionIndex: number) => {
+    const updatedSections = [...newSections];
+    updatedSections[sectionIndex].progressValues.push({
+      progressColumnValue: "",
+      progressDate_Day: 1,
+      progressDate_Month: 1,
+      progressDate_Year: 2024,
+    });
+    setNewSections(updatedSections);
+  };
+
+  const handleRemoveProgressValue = (
+    sectionIndex: number,
+    valueIndex: number
+  ) => {
+    const updatedSections = [...newSections];
+    updatedSections[sectionIndex].progressValues = updatedSections[
+      sectionIndex
+    ].progressValues.filter((_, i) => i !== valueIndex);
+    setNewSections(updatedSections);
   };
 
   const handleUpdateProgressValue = (
-    column: string,
-    index: number,
+    sectionIndex: number,
+    valueIndex: number,
     field: keyof ProgressValueDTO,
     value: any
   ) => {
-    const updatedColumnValues = [...(progressValues[column] || [])];
-    updatedColumnValues[index] = {
-      ...updatedColumnValues[index],
+    const updatedSections = [...newSections];
+    updatedSections[sectionIndex].progressValues[valueIndex] = {
+      ...updatedSections[sectionIndex].progressValues[valueIndex],
       [field]: value,
     };
-    setProgressValues({ ...progressValues, [column]: updatedColumnValues });
+    setNewSections(updatedSections);
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
 
-    const dataToSubmit: Progress = {
-      description,
+    const dataToSubmit = {
       progressName,
-      progressColumnHead: progressColumnHeads.join(","),
-      progressValues: {
-        ...Object.keys(progressValues).reduce((acc: any, key) => {
-          acc[key] = progressValues[key];
-          return acc;
-        }, {}),
-      },
+      description,
+      newSections,
+      sectionsToDelete,
     };
 
     try {
@@ -114,7 +108,6 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
       );
       alert("Progress successfully updated!");
       console.log("Server response:", response.data);
-
       onClose();
     } catch (error) {
       alert("Failed to update progress. Please try again.");
@@ -139,7 +132,7 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
         value={progressName}
         onChange={(e) => setProgressName(e.target.value)}
         required
-        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm"
         placeholder="Enter progress name"
       />
 
@@ -153,34 +146,45 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         required
-        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm"
         placeholder="Enter description"
       />
 
-      {/* Column Heads and Values */}
       <div className="mt-4">
-        <h3 className="text-sm font-medium text-gray-700">Progress Values</h3>
-        {progressColumnHeads.map((column) => (
-          <div key={column} className="mt-4">
+        <h3 className="text-sm font-medium text-gray-700">Sections</h3>
+        {newSections.map((section, sectionIndex) => (
+          <div key={sectionIndex} className="mt-4">
             <div className="flex items-center space-x-2">
-              <h4 className="text-sm font-medium text-gray-600">{column}</h4>
+              <input
+                type="text"
+                placeholder="Section Name"
+                value={section.sectionName}
+                onChange={(e) =>
+                  handleUpdateSectionName(sectionIndex, e.target.value)
+                }
+                className="block w-1/2 rounded-md border-gray-300 shadow-sm sm:text-sm"
+              />
               <button
                 type="button"
-                onClick={() => handleRemoveColumnHead(column)}
+                onClick={() =>
+                  handleRemoveSection(sectionIndex, section.sectionId)
+                }
                 className="inline-flex items-center px-2 py-1 text-sm font-semibold text-red-600 hover:text-red-800">
-                Remove Column
+                Remove Section
               </button>
             </div>
-            {(progressValues[column] || []).map((value, index) => (
-              <div key={index} className="mt-2 flex items-center space-x-2">
+            {section.progressValues.map((value, valueIndex) => (
+              <div
+                key={valueIndex}
+                className="mt-2 flex items-center space-x-2">
                 <input
                   type="text"
                   placeholder="Column Value"
                   value={value.progressColumnValue}
                   onChange={(e) =>
                     handleUpdateProgressValue(
-                      column,
-                      index,
+                      sectionIndex,
+                      valueIndex,
                       "progressColumnValue",
                       e.target.value
                     )
@@ -193,8 +197,8 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
                   value={value.progressDate_Day}
                   onChange={(e) =>
                     handleUpdateProgressValue(
-                      column,
-                      index,
+                      sectionIndex,
+                      valueIndex,
                       "progressDate_Day",
                       parseInt(e.target.value)
                     )
@@ -207,8 +211,8 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
                   value={value.progressDate_Month}
                   onChange={(e) =>
                     handleUpdateProgressValue(
-                      column,
-                      index,
+                      sectionIndex,
+                      valueIndex,
                       "progressDate_Month",
                       parseInt(e.target.value)
                     )
@@ -221,8 +225,8 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
                   value={value.progressDate_Year}
                   onChange={(e) =>
                     handleUpdateProgressValue(
-                      column,
-                      index,
+                      sectionIndex,
+                      valueIndex,
                       "progressDate_Year",
                       parseInt(e.target.value)
                     )
@@ -231,7 +235,9 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
                 />
                 <button
                   type="button"
-                  onClick={() => handleRemoveProgressValue(column, index)}
+                  onClick={() =>
+                    handleRemoveProgressValue(sectionIndex, valueIndex)
+                  }
                   className="inline-flex items-center px-2 py-1 text-sm font-semibold text-red-600 hover:text-red-800">
                   Remove
                 </button>
@@ -239,7 +245,7 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
             ))}
             <button
               type="button"
-              onClick={() => handleAddProgressValue(column)}
+              onClick={() => handleAddProgressValue(sectionIndex)}
               className="inline-flex items-center px-2 py-1 text-sm font-semibold text-blue-600 hover:text-blue-800 mt-2">
               Add Value
             </button>
@@ -247,13 +253,12 @@ function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {
         ))}
         <button
           type="button"
-          onClick={handleAddColumnHead}
+          onClick={handleAddSection}
           className="inline-flex items-center px-2 py-1 text-sm font-semibold text-blue-600 hover:text-blue-800 mt-2">
-          Add Column Head
+          Add Section
         </button>
       </div>
 
-      {/* Submit and Cancel Buttons */}
       <div className="mt-5 sm:mt-6 sm:flex sm:flex-row-reverse">
         <button
           type="submit"
