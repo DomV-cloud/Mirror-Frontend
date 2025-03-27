@@ -14,6 +14,7 @@ function HomePage() {
     try {
       const response = await getActiveUserProgressById(userId);
       setActiveProgress(response.data);
+      console.log("Fetched data:", activeProgress);
     } catch (error) {
       console.error("Failed to fetch progresses:", error);
     } finally {

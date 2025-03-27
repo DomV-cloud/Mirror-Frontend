@@ -7,11 +7,11 @@ import {
   CircularProgress,
 } from "@nextui-org/react";
 import FireIcon from "./Icons/FireIcon";
-import { Progress } from "../Types/Progress/ProgressType";
+import { IProgress } from "../Types/Progress/ProgressType";
 import { useNavigate } from "react-router-dom";
 
 type ProgressCardProps = {
-  displayActiveProgress: Progress;
+  displayActiveProgress: IProgress;
   onEdit: () => void;
 };
 export default function ProgressCard({

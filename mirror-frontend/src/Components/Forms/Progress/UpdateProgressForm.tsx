@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Progress } from "../../../Types/Progress/ProgressType";
+import { IProgress } from "../../../Types/Progress/ProgressType";
 import apiClient from "../../../Api/Client/ApiClient";
 import { ProgressSection } from "../../../Types/ProgressSection/ProgressSection";
 
@@ -18,7 +18,7 @@ type ProgressSectionDTO = {
 
 type UpdateProgressFormProps = {
   onClose: () => void;
-  progress: Progress;
+  progress: IProgress;
 };
 
 function UpdateProgressForm({ onClose, progress }: UpdateProgressFormProps) {

@@ -1,7 +1,7 @@
-import { ProgressValue } from "../ProgressValue/ProgressValue";
+import { IProgressValue } from "../ProgressValue/ProgressValue";
 
-export interface ProgressSection {
+export interface IProgressSection {
   sectionId: string;
   sectionName: string;
-  progressValues: ProgressValue[];
+  progressValues: IProgressValue[];
 }

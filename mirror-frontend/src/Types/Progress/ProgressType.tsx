@@ -1,26 +1,21 @@
-import { ProgressSection } from "../ProgressSection/ProgressSection";
+import { IProgressGoal } from "../../Interfaces/ProgressGoal/IProgressGoal";
+import { IProgressSection } from "../ProgressSection/ProgressSection";
+import { IProgressGoalMeasurement } from "../../Interfaces/ProgressMeasurement/IProgressGoalMeasurement";
+import { MeasurementDay } from "../../Enums/ProgressGoalMeasurement/MeasurementDay";
 
-export interface Progress {
+export interface IProgress {
   id: string;
   description?: string;
-  sections: ProgressSection[];
+  sections: IProgressSection[];
   progressName: string;
   isAchieved?: boolean; // possible duplication
   isActive?: boolean;
   trackedDays: number;
-  trackingProgressDay: TrackingProgressDays;
+  trackingProgressDay: MeasurementDay;
   percentageAchieved: number;
   updated?: string;
+  Goal: IProgressGoal;
+  Measurement: IProgressGoalMeasurement;
 }
 
-export enum TrackingProgressDays {
-  Monday = "Monday",
-  Tuesday = "Tuesday",
-  Wednesday = "Wednesday",
-  Thursday = "Thursday",
-  Friday = "Friday",
-  Saturday = "Saturday",
-  Sunday = "Sunday",
-}
-
-export type ProgressResponse = Progress[];
+export type ProgressResponse = IProgress[];
